@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
-import { MoonIcon, SunIcon } from "lucide-react"
+import { Moon, Sun } from "lucide-react"
 
 export function AppSidebar() {
   const { theme, setTheme } = useTheme()
@@ -22,7 +22,7 @@ export function AppSidebar() {
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <Image
-                src="/logo.svg"
+                src={'/logo.svg'}
                 alt="Logo"
                 width={60}
                 height={60}
@@ -30,19 +30,16 @@ export function AppSidebar() {
               />
               <h2 className="text-xl font-bold">AI Fusion</h2>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            >
-              {theme === "light" ? <SunIcon /> : <MoonIcon />}
-            </Button>
+            {/* Toggle de tema usando next-themes. */}
+            {theme === 'light' ? <Button variant={'ghost'} onClick={() => setTheme('dark')}><Sun/></Button> 
+            : <Button variant={'ghost'} onClick={() => setTheme('light')}><Moon/></Button>}
           </div>
+          {/* Acción principal para iniciar una nueva conversación. */}
           <Button className="mt-7 w-full" size="lg">+ New Chat</Button>
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup className={ "p-3"}>
+        <SidebarGroup>
           <div className={"p-3"}>
             <h2 className=" font-bold text-lg">Chat</h2>
             <p className="text-sm text-gray-400">Sign in to start chating multiple AI model</p>
@@ -51,7 +48,7 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <div className=" p-3 mb-10">
-          <Button className={"w-full"} size= {"lg"}>Sign In / Sign Up</Button>
+          <Button className={'w-full'} size= {'lg'}>Sign In / Sign Up</Button>
         </div>
       </SidebarFooter>
     </Sidebar>

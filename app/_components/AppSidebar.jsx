@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import {
   Sidebar,
@@ -10,10 +11,18 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "next-themes"
-import { Moon, Sun } from "lucide-react"
+import { Bolt, Moon, Sun, User2, Zap } from "lucide-react"
+import { useUser, SignInButton } from "@clerk/clerk-react"
+import UsageCreditProgress from "./UsageCreditProgress"
 
 export function AppSidebar() {
   const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  const {user} = useUser()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <Sidebar>
@@ -30,25 +39,54 @@ export function AppSidebar() {
               />
               <h2 className="text-xl font-bold">AI Fusion</h2>
             </div>
-            {/* Toggle de tema usando next-themes. */}
-            {theme === 'light' ? <Button variant={'ghost'} onClick={() => setTheme('dark')}><Sun/></Button> 
-            : <Button variant={'ghost'} onClick={() => setTheme('light')}><Moon/></Button>}
+            {/* Evita mismatch SSR/CSR con next-themes. */}
+            {mounted && (
+              theme === "light" ? (
+                <Button variant={"ghost"} onClick={() => setTheme("dark")}>
+                  <Sun />
+                </Button>
+              ) : (
+                <Button variant={"ghost"} onClick={() => setTheme("light")}>
+                  <Moon />
+                </Button>
+              )
+            )}
           </div>
-          {/* Acción principal para iniciar una nueva conversación. */}
-          <Button className="mt-7 w-full" size="lg">+ New Chat</Button>
+          {user ? (
+            <Button className="mt-7 w-full" size="lg">
+              + New Chat
+            </Button>
+          ) : (
+            <SignInButton mode="modal">
+              <Button className="mt-7 w-full" size="lg">
+                + New Chat
+              </Button>
+            </SignInButton>
+          )}
         </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <div className={"p-3"}>
             <h2 className=" font-bold text-lg">Chat</h2>
-            <p className="text-sm text-gray-400">Sign in to start chating multiple AI model</p>
+            {!user && <p className="text-sm text-gray-400">Sign in to start chating multiple AI model</p>}
           </div>
           </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <div className=" p-3 mb-10">
-          <Button className={'w-full'} size= {'lg'}>Sign In / Sign Up</Button>
+          {!user? <SignInButton mode="modal">
+            <Button className={'w-full'} size= {'lg'}>Sign In / Sign Up</Button>
+          </SignInButton>
+          :
+          <div>
+            <UsageCreditProgress />
+            <Button className={'w-full mb-3'}> <Zap /> Upgrade Plan </Button>
+            <Button className="flex " variant={"ghost"}>
+              <User2 /> <h2>Settings</h2>
+            </Button>
+          </div>
+          }
         </div>
       </SidebarFooter>
     </Sidebar>
